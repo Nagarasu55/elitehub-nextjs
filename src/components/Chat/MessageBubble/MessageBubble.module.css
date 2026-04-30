@@ -1,0 +1,295 @@
+/* ─── MessageBubble.module.css ─────────────────────────────────────────────── */
+
+/* ── Wrapper ──────────────────────────────────────────────────────────────── */
+.messageRow {
+    display: flex;
+    opacity: 1;
+    transition: opacity 0.2s ease;
+    gap: 8px;
+}
+
+.messageRowOwn {
+    justify-content: flex-end;
+}
+
+.messageRowOther {
+    justify-content: flex-start;
+}
+
+.selectionCursor {
+    cursor: pointer;
+}
+
+.defaultCursor {
+    cursor: default;
+}
+
+/* ── Selection checkbox ───────────────────────────────────────────────────── */
+.selectionCheckbox {
+    margin-top: 6px;
+}
+
+/* ── Bubble ───────────────────────────────────────────────────────────────── */
+.bubble {
+    max-width: min(70%, 420px);
+    padding: 8px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.bubbleOwn {
+    border-radius: 16px 0 16px 16px;
+    cursor: context-menu;
+}
+
+.bubbleOther {
+    border-radius: 0 16px 16px 16px;
+    cursor: context-menu;
+}
+
+.bubbleDeleted {
+    cursor: default;
+}
+
+/* ── Group sender name ────────────────────────────────────────────────────── */
+.senderName {
+    font-size: 13px;
+    font-weight: bold;
+    display: block;
+}
+
+/* ── Deleted placeholder ──────────────────────────────────────────────────── */
+.deletedText {
+    font-size: 13px;
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* ── File list ────────────────────────────────────────────────────────────── */
+.fileList {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* ── Image attachment ─────────────────────────────────────────────────────── */
+.imageWrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.attachmentImage {
+    max-width: 220px;
+    max-height: 220px;
+    border-radius: 8px;
+    object-fit: cover;
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.imageOverlay {
+    position: absolute;
+    inset: 0;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.imageOverlayIcon {
+    font-size: 22px;
+    color: #fff;
+    cursor: pointer;
+}
+
+/* ── File row (video / document / generic) ────────────────────────────────── */
+.fileRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 8px;
+}
+
+.fileRowOwn {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.fileRowOther {
+    background: rgba(0, 0, 0, 0.06);
+}
+
+.fileMeta {
+    overflow: hidden;
+    flex: 1;
+}
+
+.fileName {
+    font-size: 12px;
+    display: block;
+    max-width: 140px;
+}
+
+.fileSize {
+    font-size: 11px;
+}
+
+.fileActions {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.downloadIcon {
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.downloadIconAllowed {
+    cursor: pointer;
+}
+
+.downloadIconDisabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+
+.audioName {
+    font-size: 11px;
+}
+
+.audioDownloadIcon {
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.audioDownloadIconDisabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* ── Message body text ────────────────────────────────────────────────────── */
+.messageText {
+    font-size: 13px;
+    display: block;
+}
+
+.editedLabel {
+    font-size: 10px;
+    margin-left: 4px;
+}
+
+/* ── Inline edit ──────────────────────────────────────────────────────────── */
+.editContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.editTextarea {
+    font-size: 13px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 6px;
+}
+
+.editActions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.editCancelIcon {
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.editSaveIcon {
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* ── Timestamp row ────────────────────────────────────────────────────────── */
+.timestampRow {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 2px;
+    margin-top: 2px;
+}
+
+.timestampText {
+    font-size: 11px;
+}
+
+/* ── Message ticks ────────────────────────────────────────────────────────── */
+.ticks {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 4px;
+}
+
+/* ── Re-download modal ────────────────────────────────────────────────────── */
+.redownloadDescription {
+    font-size: 13px;
+}
+
+.redownloadOptions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.redownloadButton {
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    text-align: left;
+}
+
+/* ── Video modal ──────────────────────────────────────────────────────────── */
+.videoPlayer {
+    width: 100%;
+    border-radius: 8px;
+}
+
+/* ── Re-download modal intro padding ─────────────────────────────────────── */
+.redownloadBody {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 8px;
+}
+
+
+/* In MessageBubble.module.css */
+
+.audioWrapper {
+  display: flex;
+  flex-direction: column;
+  min-width: 100%;      /* ✅ prevents collapsing */
+  max-width: 320px;
+  gap: 4px;
+}
+
+.audioElement {
+  width: 100%;           /* ✅ fills wrapper */
+  height: 40px;          /* ✅ fixed height */
+  display: block;
+}
+
+.audioFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

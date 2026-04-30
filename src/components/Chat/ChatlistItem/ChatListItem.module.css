@@ -1,0 +1,63 @@
+/* ─── Container ──────────────────────────────────────────────────────────── */
+
+.item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+/* active state applied via JS — token colors can't live in CSS */
+.item.active {
+    /* background and border-color set inline via token */
+}
+
+/* ─── Info block ─────────────────────────────────────────────────────────── */
+
+.info {
+    flex: 1;
+    min-width: 0;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.name {
+    font-size: 13px !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.status {
+    font-size: 12px !important;
+}
+
+/* ─── Unread badge ───────────────────────────────────────────────────────── */
+
+.unreadBadge {
+    background: #52c41a;
+    color: #fff;
+    border-radius: 50%;
+    min-width: 18px;
+    height: 18px;
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    flex-shrink: 0;
+}
+
+/* ─── Online indicator color (used on status text) ───────────────────────── */
+
+.statusOnline {
+    color: #52c41a !important;
+}

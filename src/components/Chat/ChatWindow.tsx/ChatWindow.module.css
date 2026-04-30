@@ -1,0 +1,197 @@
+/* ─── ChatWindow Layout ──────────────────────────────────────────────────── */
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* ─── Header ─────────────────────────────────────────────────────────────── */
+
+.header {
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+    /* border-bottom and background come from Ant Design token — keep inline */
+}
+
+.headerInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+.headerName {
+    display: block;
+    font-size: 14px;
+}
+
+.headerStatus {
+    font-size: 12px;
+}
+
+.headerSettingsBtn {
+    margin-left: auto;
+}
+
+/* ─── Message List ───────────────────────────────────────────────────────── */
+
+.messageList {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.loadingWrapper {
+    text-align: center;
+    padding-top: 40px;
+}
+
+/* ─── Typing Indicator ───────────────────────────────────────────────────── */
+
+.typingBar {
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    /* max-height, opacity, padding, border-top transition — keep inline (dynamic) */
+}
+
+.typingDots {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.typingDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: typingBounce 1.4s infinite ease-in-out;
+}
+
+.typingDot:nth-child(1) { animation-delay: 0s; }
+.typingDot:nth-child(2) { animation-delay: 0.16s; }
+.typingDot:nth-child(3) { animation-delay: 0.32s; }
+
+@keyframes typingBounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.35; }
+    30%            { transform: translateY(-5px); opacity: 1; }
+}
+
+.typingText {
+    font-size: 12px;
+}
+
+/* ─── File Preview Strip ─────────────────────────────────────────────────── */
+
+.filePreviewStrip {
+    padding: 8px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    /* border-top and background come from token — keep inline */
+}
+
+.filePreviewCount {
+    font-size: 12px;
+}
+
+.filePreviewList {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.filePreviewItem {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 8px;
+    overflow: hidden;
+    max-width: 160px;
+    flex-shrink: 0;
+    /* background, border, padding come from token — keep inline */
+}
+
+.filePreviewThumb {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    display: block;
+}
+
+.filePreviewMeta {
+    overflow: hidden;
+}
+
+.filePreviewName {
+    font-size: 12px;
+    display: block;
+    max-width: 90px;
+}
+
+.filePreviewSize {
+    font-size: 11px;
+}
+
+.filePreviewRemoveBtn {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 18px !important;
+    height: 18px !important;
+    min-width: unset !important;
+    padding: 0 !important;
+    background: rgba(0, 0, 0, 0.45) !important;
+    color: #fff !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* ─── Input Bar ──────────────────────────────────────────────────────────── */
+
+.inputBar {
+    padding: 12px 16px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-shrink: 0;
+    /* border-top and background come from token — keep inline */
+}
+
+.messageInput {
+    flex: 1;
+}
+
+/* ─── Selection Mode Toolbar ─────────────────────────────────────────────── */
+
+.selectionToolbar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    z-index: 100;
+    /* background and border-top come from token — keep inline */
+}
+
+.selectionCount {
+    /* inherits Typography.Text styles */
+}
+
+.selectionActions {
+    display: flex;
+    gap: 8px;
+}

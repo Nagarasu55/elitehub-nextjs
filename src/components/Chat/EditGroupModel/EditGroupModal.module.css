@@ -1,0 +1,87 @@
+/* ─── Modal Body ─────────────────────────────────────────────────────────── */
+
+.body {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 16px;
+}
+
+/* ─── Group Name Section ─────────────────────────────────────────────────── */
+
+.sectionLabel {
+    display: block !important;
+    margin-bottom: 6px;
+}
+
+.nameRow {
+    display: flex;
+    gap: 8px;
+}
+
+/* ─── Members List ───────────────────────────────────────────────────────── */
+
+.membersLabel {
+    display: block !important;
+    margin-bottom: 8px;
+}
+
+.membersList {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.memberItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 8px;
+    border-radius: 8px;
+    background: #fafafa;
+}
+
+.memberLeft {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.memberName {
+    font-size: 13px !important;
+}
+
+.memberYou {
+    font-size: 11px !important;
+    margin-left: 6px;
+}
+
+.adminTag {
+    margin-left: 6px !important;
+    font-size: 10px !important;
+}
+
+/* ─── Add Members Section ────────────────────────────────────────────────── */
+
+.addMembersRow {
+    display: flex;
+    gap: 8px;
+}
+
+.addMembersSelect {
+    flex: 1;
+}
+
+/* ─── Leave Button ───────────────────────────────────────────────────────── */
+
+.leaveBtn {
+    align-self: flex-start;
+}
+
+/* ─── Divider ────────────────────────────────────────────────────────────── */
+
+.divider {
+    margin: 0 !important;
+}
