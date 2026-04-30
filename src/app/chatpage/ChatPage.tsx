@@ -11,10 +11,11 @@ import { useRouter } from "next/navigation";
 import { LogoutOutlined, UserOutlined } from "@ant-design/icons";
 import { getSocket } from "../../service/socket";
 import { useCallback } from "react";
-import Image from "next/image";
 
 const { Sider, Content } = Layout;
 const { Text } = Typography;
+
+const socket = getSocket();
 
 const ChatPage = () => {
 
@@ -23,6 +24,8 @@ const ChatPage = () => {
     const resetChat = useChatStore(state => state.resetChat);
     const updateConversationToTop = useChatStore(state => state.updateConversationToTop);
     const setActiveConversation = useChatStore(state => state.setActiveConversation);
+    const user = useAuthStore(state => state.user);
+    const clearUser = useAuthStore(state => state.clearUser);
 
     const [hideSidebar, setHideSidebar] = useState(() => {
         if (typeof window === "undefined") return false;
@@ -33,9 +36,7 @@ const ChatPage = () => {
     const [lastSeenMap, setLastSeenMap] = useState<Record<number, string>>({});
     const activeConversationRef = useRef(activeConversation);
     const { token } = theme.useToken();
-    const { user, clearUser } = useAuthStore();
     const router = useRouter();
-    const socket = getSocket();
 
     console.log("ChatPage render"); // should not log excessively
 
@@ -48,14 +49,14 @@ const ChatPage = () => {
 
     };
 
-    const handleHideSidebar = () => {
+    const handleHideSidebar = useCallback(() => {
         setHideSidebar(prev => {
             const newValue = !prev;
             console.log(newValue)
             localStorage.setItem("hideSidebar", String(newValue));
             return newValue;
         });
-    };
+    }, []);
 
     useEffect(() => {
         activeConversationRef.current = activeConversation;
@@ -209,7 +210,7 @@ const ChatPage = () => {
     }, [user?.id]);
 
     // ✅ Mark messages as read
-    const handleMarkRead = async (conversationId: number) => {
+    const handleMarkRead = useCallback(async (conversationId: number) => {
         try {
             await axiosInstance.put(`/messages/mark-read/${conversationId}`, {
                 userId: user?.id,
@@ -218,7 +219,7 @@ const ChatPage = () => {
         } catch (err) {
             console.error(err);
         }
-    }; // ✅ closes here, not after JSX
+    }, [user?.id]) // ✅ closes here, not after JSX
 
 
 
@@ -270,7 +271,7 @@ const ChatPage = () => {
                 padding: "0 20px",
                 flexShrink: 0,
             }}>
-                <Image src='/assets/elitehub_logo.svg' alt="EliteHub" width={100} height={40} className={styles.logo} />
+                <img src='/assets/elitehub_logo.svg' alt="EliteHub" className={styles.logo} />
 
                 <Popover content={profileContent} trigger="click" placement="bottomRight" arrow={false}>
                     <Avatar style={{ background: token.colorPrimary, cursor: "pointer" }} icon={<UserOutlined />}>
