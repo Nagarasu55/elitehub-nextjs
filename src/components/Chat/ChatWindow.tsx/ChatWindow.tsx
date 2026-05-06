@@ -29,6 +29,7 @@ import {
     AudioOutlined,
     CloseOutlined,
     SettingOutlined,
+    SmileOutlined,
 } from "@ant-design/icons";
 import { useChatStore } from "../../../store/chatStore";
 import { getSocket } from "../../../service/socket";
@@ -39,6 +40,7 @@ import { getDateLabel } from "../../../utils/datelabel";
 import DateDivider from "../DateDivider/DateDivider";
 import EditGroupModal from "../EditGroupModel/EditGroupModal";
 import styles from "./ChatWindow.module.css";
+import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 
 const { Text } = Typography;
 
@@ -105,7 +107,7 @@ const ChatWindow = ({
     onUnreadIncrement,
     onMarkRead
 }: Props) => {
-    
+
     const activeConversation = useChatStore(state => state.activeConversation);
     const messages = useChatStore(state => state.messages);
     const setConversations = useChatStore(state => state.setConversations);
@@ -124,6 +126,7 @@ const ChatWindow = ({
     const [editGroupOpen, setEditGroupOpen] = useState(false);
     const [selectionMode, setSelectionMode] = useState(false);
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
     const [filePreviews, setFilePreviews] = useState<FilePreview[]>([]);
     const [uploadProgress, setUploadProgress] = useState<number>(0);
@@ -143,11 +146,31 @@ const ChatWindow = ({
     const [typingUsers, setTypingUsers] = useState<string[]>([]);
     const activeConversationRef = useRef(activeConversation);
     const onUnreadIncrementRef = useRef(onUnreadIncrement);
+    const messageListRef = useRef<HTMLDivElement>(null);
+    const emojiPickerRef = useRef<HTMLDivElement>(null);
+
+    const isNearBottom = () => {
+        const el = messageListRef.current;
+        if (!el) return true;
+        return el.scrollHeight - el.scrollTop - el.clientHeight < 150;
+    };
+
+    const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
+        setTimeout(() => {
+            bottomRef.current?.scrollIntoView({ behavior });
+        }, 50);
+    };
 
     useEffect(() => { activeConversationRef.current = activeConversation; }, [activeConversation]);
     useEffect(() => { onUnreadIncrementRef.current = onUnreadIncrement; }, [onUnreadIncrement]);
 
+    useEffect(() => {
+        if (!loading) scrollToBottom("instant");
+    }, [loading]);
 
+    useEffect(() => {
+        if (!loading && isNearBottom()) scrollToBottom("smooth");
+    }, [messages, typingUsers.length]);
     // ── Active conversation change ──────────────────────────────────────────
     useEffect(() => {
         if (!activeConversation) return;
@@ -273,6 +296,17 @@ const ChatWindow = ({
             updateConversationToTop(msg.conversation_id, msg.created_at);
             socket.emit("mark_delivered", { conversationId: msg.conversation_id, userId: currentUserId });
             socket.emit("mark_read", { conversationId: msg.conversation_id, userId: currentUserId });
+            // Check if message has images
+            const fileUrls = typeof msg.file_urls === "string"
+                ? JSON.parse(msg.file_urls)
+                : (msg.file_urls ?? []);
+            const hasImages = fileUrls.some((f: { mimeType: string }) => f.mimeType?.startsWith("image/"));
+
+            // If no images, scroll immediately
+            // If has images, onMediaLoad in MessageBubble will handle scroll
+            if (!hasImages) {
+                setTimeout(() => scrollToBottom("smooth"), 50);
+            }
         };
         socket.on("receive_message", handleMessage);
         return () => { socket.off("receive_message", handleMessage); };
@@ -350,6 +384,7 @@ const ChatWindow = ({
                 setFilePreviews([]);
             }
             socket.emit("message", { conversationId: activeConversation.id, senderId: currentUserId, body: sentText, fileUrls });
+            setTimeout(() => scrollToBottom("smooth"), 100);
         } catch (err) {
             console.error("Send failed:", err);
             antMessage.error("Failed to send. Please try again.");
@@ -361,7 +396,9 @@ const ChatWindow = ({
     };
 
     // ── Typing ─────────────────────────────────────────────────────────────
-    const handleMessageOnchange = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+
+    const handleMessageOnchange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setText(e.target.value);
         if (!activeConversation) return;
         if (!isTypingRef.current) {
@@ -443,6 +480,13 @@ const ChatWindow = ({
                         isSelected={selectedIds.includes(msg.id)}
                         onSelect={toggleSelect}
                         onEnterSelectMode={enterSelectMode}
+                        onMediaLoad={() => {
+                            // For received images, always scroll if it's the last message
+                            const isLastMessage = msg.id === messages[messages.length - 1]?.id;
+                            if (isLastMessage || isNearBottom()) {
+                                scrollToBottom("smooth");
+                            }
+                        }}
                     />
                 </div>
             );
@@ -542,6 +586,20 @@ const ChatWindow = ({
         }
     };
 
+    const handleEmojiSelect = (emojiData: EmojiClickData) => {
+        setText(prev => prev + emojiData.emoji);
+    };
+
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if (emojiPickerRef.current && !emojiPickerRef.current.contains(e.target as Node)) {
+                setShowEmojiPicker(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
     // ── Render ─────────────────────────────────────────────────────────────
     return (
         <div className={styles.container}>
@@ -604,7 +662,7 @@ const ChatWindow = ({
             </div>
 
             {/* Message list */}
-            <div className={styles.messageList}>
+            <div className={styles.messageList} ref={messageListRef}>
                 {loading
                     ? <div className={styles.loadingWrapper}><Spin /></div>
                     : renderMessagesWithDividers()
@@ -666,13 +724,62 @@ const ChatWindow = ({
                         style={{ flexShrink: 0 }}
                     />
                 </Tooltip>
-                <Input
+
+                <div ref={emojiPickerRef} style={{ position: 'relative' }}>
+                    <Tooltip title="Emoji">
+                        <Button
+                            type="text"
+                            icon={<SmileOutlined />}
+                            onClick={() => setShowEmojiPicker(prev => !prev)}
+                            disabled={isUploading}
+                            style={{ flexShrink: 0 }}
+                        />
+                    </Tooltip>
+                    {showEmojiPicker && (
+                        <div
+                            style={{
+                                position: 'fixed',
+                                bottom: 70,
+                                left: '50%',
+                                transform: 'translateX(-50%)',
+                                zIndex: 1000,
+                                width: `min(350px, calc(100vw - 24px))`,
+                            }}
+                        >
+                            <EmojiPicker
+                                onEmojiClick={handleEmojiSelect}
+                                skinTonesDisabled
+                                searchDisabled={false}
+                                height={400}
+                                width="100%"   // ← fill the wrapper div
+                            />
+                        </div>
+                    )}
+                </div>
+
+                {/* <Input
                     value={text}
                     onChange={handleMessageOnchange}
                     onPressEnter={handleSend}
                     placeholder="Type a message..."
                     className={styles.messageInput}
                     disabled={isUploading}
+                /> */}
+
+                <Input.TextArea
+                    value={text}
+                    onChange={handleMessageOnchange as any}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            handleSend();
+                        }
+                    }}
+                    placeholder="Type a message..."
+                    className={styles.messageInput}
+                    disabled={isUploading}
+                    autoSize={{ minRows: 1, maxRows: 5 }}
+                    style={{ resize: 'none' }}
                 />
                 <Button
                     type="primary"

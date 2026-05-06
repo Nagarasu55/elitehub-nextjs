@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ["antd", "@ant-design/icons"],
   },
+  output: 'standalone',
 };
 
 export default nextConfig;

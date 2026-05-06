@@ -32,6 +32,7 @@ interface Props {
     isSelectionMode: boolean;
     onSelect: (messageId: number) => void;
     onEnterSelectMode: (messageId: number) => void;
+    onMediaLoad: () => void;
 }
 
 interface DownloadedFile {
@@ -72,6 +73,11 @@ const getAvatarColor = (text: string) => {
     return colors[Math.abs(hash) % colors.length];
 };
 
+const isEmojiOnly = (text: string): boolean => {
+    const emojiRegex = /^[\p{Emoji}\s]+$/u;
+    return emojiRegex.test(text.trim()) && text.trim().length > 0;
+};
+
 const isOpenWithType = (mimeType: string) =>
     mimeType === "application/pdf" ||
     mimeType.includes("wordprocessingml") ||
@@ -95,6 +101,7 @@ const MessageBubble = ({
     isSelectionMode,
     onSelect,
     onEnterSelectMode,
+    onMediaLoad
 }: Props) => {
     const { token } = theme.useToken();
 
@@ -139,7 +146,10 @@ const MessageBubble = ({
     const subtleColor = isOwn ? "rgba(255,255,255,0.65)" : token.colorTextSecondary;
 
     const isWithin5Mins = (): boolean => {
-        const sent = new Date(message.created_at).getTime();
+        const raw = message.created_at;
+        if (!raw) return false;
+        const normalized = raw.includes("T") ? raw : raw.replace(" ", "T");
+        const sent = new Date(normalized + "Z").getTime();
         return Date.now() - sent < 5 * 60 * 1000;
     };
 
@@ -385,6 +395,7 @@ const MessageBubble = ({
                                                             src={f.url}
                                                             alt={f.name}
                                                             className={styles.attachmentImage}
+                                                            onLoad={onMediaLoad}
                                                         />
                                                         <div className={styles.imageOverlay}>
                                                             <Tooltip title="View">
@@ -575,7 +586,11 @@ const MessageBubble = ({
                                     ) : (
                                         <Text
                                             className={styles.messageText}
-                                            style={{ color: textColor }}
+                                            style={{
+                                                color: textColor,
+                                                fontSize: isEmojiOnly(message.body ?? "") ? "30px" : '14px' ,
+                                                lineHeight: isEmojiOnly(message.body ?? "") ? "1.2" : undefined,
+                                            }}
                                         >
                                             {message.body}
                                             {message.is_edited && (
